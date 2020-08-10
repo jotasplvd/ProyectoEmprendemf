@@ -4,11 +4,25 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as do_login
 from django.contrib.auth.forms import UserCreationForm
+from .models import Eficacia_global
+from django.http import JsonResponse
 
 def welcome(request):
     if request.user.is_authenticated:
         return render(request, "users/welcome.html")
-    return redirect('/login')    
+    return redirect('/login')
+
+def chart(request):
+    labels = []
+    data = []
+    queryset = Eficacia_global.objects.all()
+    for i in queryset:
+        labels.append(i.tramo)
+        data.append(i.porcentaje)
+    return JsonResponse(data={
+        'labels': labels,
+        'data': data,
+    })
 
 def register(request):
     form = UserCreationForm()
@@ -37,3 +51,5 @@ def login(request):
 def logout(request):
     do_logout(request)
     return redirect('/')
+
+    

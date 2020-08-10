@@ -1,9 +1,62 @@
+
+
+
+{% block content %}
 <h2>Área para miembros</h2>
 
 <p>
     Bienvenido <b>{{request.user.username}}</b>, 
     esta página es exclusiva para usuarios registrados.
 </p>
+
+
+  <div id="container" style="width: 75%;">
+    <canvas id="chart" data-url="{% url 'chart' %}"></canvas>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    $(function () {
+
+      var $chart = $("#chart");
+      $.ajax({
+        url: $chart.data("url"),
+        success: function (data) {
+
+          var ctx = $chart[0].getContext("2d");
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Porcentaje',
+                backgroundColor: 'blue',
+                data: data.data
+              }]          
+            },
+            options: {
+              responsive: true,
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Eficacia global por tramos'
+              }
+            }
+          });
+
+        }
+      });
+
+    });
+
+  </script>
+
+{% endblock %}
 
 <hr />
 <a href="/logout">Cerrar sesión</a>
